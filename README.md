@@ -1,2 +1,2 @@
 # AFIP
-Generación automática de comprobantes en línea y declaraciones juradas. 
+Generación automática de comprobantes en línea y declaraciones juradas utilizando selenium.
