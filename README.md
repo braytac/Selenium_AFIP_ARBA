@@ -1,4 +1,4 @@
-# AFIP
+# Facturas C AFIP / DDJJ ARBA y DB local en SQLite 
 
 Generación automática de comprobantes en línea (AFIP) y declaraciones juradas (ARBA) utilizando selenium.
 
