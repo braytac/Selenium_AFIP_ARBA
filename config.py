@@ -5,7 +5,7 @@ GuardarEnDB = True
 
 pagina_login = 'https://auth.afip.gob.ar/contribuyente_/login.xhtml'
 pagina_generar_comprobantes = 'https://serviciosjava2.afip.gob.ar/rcel/jsp/menu_ppal.jsp'
-pagina_princpal_arba = 'http://www.arba.gov.ar/DatosContacto/DatosContactoRedirect.asp?destino=http://www.arba.gov.ar/Gestionar/Gestionar_Default.asp'
+pagina_princpal_arba = 'http://www.arba.gov.ar/Gestionar/Gestionar_Default.asp'
 
 unidades_medida = " unidades"
 pto_venta = '1'
