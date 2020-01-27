@@ -5,6 +5,8 @@ import sys
 import os
 import shutil
 import subprocess as sp
+sys.path.insert(0, 'libs')
+import selenium
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -14,7 +16,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-import chromedriver_binary
+#import chromedriver_binary
 from getpass import getpass
 
 from time import sleep
@@ -77,7 +79,11 @@ try:
 			hasta_sqlite = date(desde_dt.year, desde_dt.month, calendar.monthrange(datetime.now().year, mes_hasta)[1]).strftime("%Y-%m-%d")
 			#hasta = date(datetime.now().year, datetime.now().month-1, calendar.monthrange(datetime.now().year, datetime.now().month-1)[1]).strftime("%d/%m/%Y")
 
-			venc  = date(datetime.now().year, datetime.now().month, 28).strftime("%d/%m/%Y")
+			# SI QUIERO TODOS LOS 28
+			#venc  = date(datetime.now().year, datetime.now().month, 28).strftime("%d/%m/%Y")
+
+			# 10 días desde ahora:
+			venc = (datetime.now() + dateutil.relativedelta.relativedelta(days=10)).strftime("%d/%m/%Y")                        
 			#venc = "05/02/2019"
 
 			para = input( selecc + "\n Selección: " )
