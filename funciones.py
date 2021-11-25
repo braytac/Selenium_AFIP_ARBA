@@ -7,6 +7,7 @@
 from pathlib import Path
 import sqlite3
 from sqlite3 import Error
+from datetime import date
 
 database = Path('FacturasAFIP.db')
 
@@ -84,9 +85,16 @@ def insertar_factura(conn, datos):
     :param datos:
     :return: facturas id
     """
-
-    sql = ''' INSERT INTO facturas (nro_comprobante, cuit,destinatario,monto,concepto,desde,hasta)
-              VALUES (?,?,?,?,?,?,?) '''
+    fecha_factura = date.today().strftime("%Y-%m-%d")
+    sql = "INSERT INTO facturas ( \
+                                    nro_comprobante, \
+                                    cuit,destinatario, \
+                                    monto, \
+                                    concepto, \
+                                    desde, \
+                                    hasta, \
+                                    fecha_factura)\
+              VALUES (?,?,?,?,?,?,?,'"+fecha_factura+"')"
     cur = conn.cursor()
     cur.execute(sql, datos)
     conn.commit()
@@ -118,8 +126,9 @@ def guardar_factura(conn, factura_campos):
 #eliminar_registro(conn,'1')
 
 def mostrar_facturas(conn):
-    sql = """ SELECT nro_comprobante,destinatario,monto,desde,hasta FROM facturas ORDER BY nro_comprobante ASC """
+    sql = """ SELECT nro_comprobante,destinatario,monto,fecha_factura,desde,hasta FROM facturas ORDER BY nro_comprobante ASC """
     facturas = consulta_factura(conn, sql)
+    print("Nº comp.\t  Destinatario\t\t\t monto \t Fecha factura\t Desde\t\tHasta\t \n")    
     for factura in facturas:
         if len(factura[1]) < 25:
             tab = "\t\t\t";
@@ -129,9 +138,34 @@ def mostrar_facturas(conn):
               str(factura[1])+tab+"\t"+
               str(factura[2])+"\t"+
               str(factura[3])+"\t"+
-              str(factura[4]))
-              
+              str(factura[4])+"\t"+
+              str(factura[5]))
+
+
 def mostrar_montos_DDJJ(conn):
+    sql = """SELECT sum(monto) AS monto,strftime('%m/%Y',fecha_factura) AS periodo FROM facturas 
+          GROUP BY periodo 
+          ORDER BY hasta ASC """
+
+    ddjjs = consulta_factura(conn, sql)
+    print("\nMENSUALES\n__________________________\nPeríodo\t  Monto Facturado\n")
+    for ddjj in ddjjs:
+
+        print(str(ddjj[1])+"\t|  "+
+              str(ddjj[0]))
+
+    sql = """SELECT sum(monto) AS monto,strftime('%Y',fecha_factura) AS periodo FROM facturas 
+          GROUP BY periodo 
+          ORDER BY hasta ASC """
+
+    ddjjs = consulta_factura(conn, sql)
+    print("\nANUALES\n__________________________\nPeríodo\t  Monto\n")
+    for ddjj in ddjjs:
+
+        print(str(ddjj[1])+"\t|  "+
+              str(ddjj[0]))  
+
+def mostrar_ingresos_mes(conn):
     sql = """SELECT sum(monto) AS monto,strftime('%m/%Y',hasta) AS periodo FROM facturas 
           GROUP BY periodo 
           ORDER BY hasta ASC """

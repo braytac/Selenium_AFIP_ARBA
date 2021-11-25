@@ -6,6 +6,9 @@ import os
 import shutil
 import subprocess as sp
 sys.path.insert(0, 'libs')
+# Migrado de chrome driver a : 
+# https://pypi.org/project/webdriver-manager/
+from webdriver_manager.chrome import ChromeDriverManager
 import selenium
 from selenium import webdriver
 from selenium.webdriver import ActionChains
@@ -30,7 +33,7 @@ import lxml.html
 
 # pip install selenium chromedriver-binary
 # pacman -S python-dateutil python-lxml
-#import pdb
+import pdb
 # import readline
 # import rlcompleter # para autocomp. en modo interact
 
@@ -45,7 +48,8 @@ try:
 					 "3: Ver facturas en DB\n"+
 					 "4: Eliminar factura\n"+
 					 "5: Guardar factura manualmente en DB\n"+
-					 "6: Montos para DDJJ ARBA\n"+
+					 "6: Ingresos por mes\n"+
+					 "7: Montos para DDJJ ARBA\n"+
 					 "0: Salir (o ctrl+c)\n"+
 					 "\n Selección:  ")
 		#pdb.set_trace()
@@ -55,30 +59,38 @@ try:
 		if sele == "1":
 
 			confirmar = input("¿Confirmar generación de comprobante? [s/n]: ")
+			fecha_manual = input("¿Fechas manuales? [s/n]: ")
+			if fecha_manual == 's':
+				fd = input("Fecha desde: ")
+				desde_dt = datetime.strptime(fd, '%d/%m/%Y')
+			else:
+				#desde = date.today().strftime("%d/%m/%y")
+				#hasta = date.today().strftime("%d/%m/%y")
+				#venc  = date.today().strftime("%d/%m/%y")
 
-			#desde = date.today().strftime("%d/%m/%y")
-			#hasta = date.today().strftime("%d/%m/%y")
-			#venc  = date.today().strftime("%d/%m/%y")
+				# ajustado para mi:
+				# desde/hasta -> 01 mes anterior a 30 o 31 mes anterior
+				# ven: 20 del mes actual
 
-			# ajustado para mi:
-			# desde/hasta -> 01 mes anterior a 30 o 31 mes anterior
-			# ven: 20 del mes actual
+				# 1er dia mes anterior
 
-			# 1er dia mes anterior
+				# desde = date(datetime.now().year, datetime.now().month-1, 1).strftime("%d/%m/%Y")
+				desde_dt = datetime.now() + dateutil.relativedelta.relativedelta(months=-1)
+				#ultimo dia mes anterior
+				#hasta = date(datetime.now().year, datetime.now().month-1, calendar.monthrange(datetime.now().year, datetime.now().month-1)[1]).strftime("%d/%m/%Y")
 
-			# desde = date(datetime.now().year, datetime.now().month-1, 1).strftime("%d/%m/%Y")
-			desde_dt = datetime.now() + dateutil.relativedelta.relativedelta(months=-1)
-			desde = date(desde_dt.year,desde_dt.month,1).strftime("%d/%m/%Y")
-			desde_sqlite = date(desde_dt.year,desde_dt.month,1).strftime("%Y-%m-%d")
-			
-			#ultimo dia mes anterior
-			#hasta = date(datetime.now().year, datetime.now().month-1, calendar.monthrange(datetime.now().year, datetime.now().month-1)[1]).strftime("%d/%m/%Y")
+
 			mes_hasta = desde_dt.month
 			#(calendar.monthrange(datetime.now().year, mes_hasta)[1]).strftime("%d/%m/%Y")
+
+			desde = date(desde_dt.year,desde_dt.month,1).strftime("%d/%m/%Y")
+			desde_sqlite = date(desde_dt.year,desde_dt.month,1).strftime("%Y-%m-%d")
+
 			hasta = date(desde_dt.year, desde_dt.month, calendar.monthrange(datetime.now().year, mes_hasta)[1]).strftime("%d/%m/%Y")
 			hasta_sqlite = date(desde_dt.year, desde_dt.month, calendar.monthrange(datetime.now().year, mes_hasta)[1]).strftime("%Y-%m-%d")
 			#hasta = date(datetime.now().year, datetime.now().month-1, calendar.monthrange(datetime.now().year, datetime.now().month-1)[1]).strftime("%d/%m/%Y")
-
+			print(desde)
+			print(hasta)
 			# SI QUIERO TODOS LOS 28
 			#venc  = date(datetime.now().year, datetime.now().month, 28).strftime("%d/%m/%Y")
 
@@ -102,9 +114,10 @@ try:
 			#cuit_receptor = input("CUIT receptor: ")
 			#monto = input("Precio unitario: ")
 
-			driver = webdriver.Chrome()
+			driver = webdriver.Chrome(ChromeDriverManager().install())
+			# driver = webdriver.Chrome()
 			driver.get(pagina_login)
-			#driver.switch_to.window(driver.current_window_handle)
+			# driver.switch_to.window(driver.current_window_handle)
 			pyName = driver.title
 			pyHandle = driver.current_window_handle # es = driver.window_handles[0]	
 
@@ -142,6 +155,14 @@ try:
 
 
 			try:
+				ir_version_orig = EC.presence_of_element_located((By.XPATH, "//a[contains(., 'Ver versión original')]"))
+				WebDriverWait(driver, timeout).until(ir_version_orig)
+				# Tiene el portal resumido
+				driver.get("https://portalcf.cloud.afip.gob.ar/portal/app/")
+			except TimeoutException:
+				pass
+
+			try:
 				element_present = EC.presence_of_element_located((By.XPATH, "//button[contains(., 'Ir al portal')]"))
 				WebDriverWait(driver, timeout).until(element_present)
 			except TimeoutException:
@@ -173,6 +194,20 @@ try:
 			driver.switch_to.window(pyHandle)
 			
 			# dot . stands for text()
+			"""
+			try:
+				element_present = EC.presence_of_element_located((By.ID, "myModalAdmRel"))
+				# EC.presence_of_element_located((By.ID, "bBtn1"))
+				# FALLA POR ERROR EN PÁGINA AFIP QUE TIENE DOS button con mismo ID !
+				WebDriverWait(driver, timeout).until(element_present)
+			except:
+				pass
+			finally:
+				driver.find_elements_by_xpath("//div[@id='myModalAdmRel']/button[contains(.,'Aceptar')]")
+			driver.find_element_by_xpath("//button[contains(.,'Aceptar')]").click()
+			
+			sleep(2)
+			"""
 			try:
 				element_present = EC.presence_of_element_located((By.XPATH, "//button[contains(.,'Emitir Factura')]"))
 				# EC.presence_of_element_located((By.ID, "bBtn1"))
@@ -348,8 +383,9 @@ try:
 
 				razonsocialreceptor = driver.find_element_by_id("razonsocialreceptor")
 				razonsocialreceptor.click()
-				#sleep(2)
+				sleep(1)
 				#razonsocialreceptor.send_keys(Keys.TAB)
+				"""
 				try:
 					element_present = EC.presence_of_element_located((By.ID, "domicilioreceptorcombo"))
 					WebDriverWait(driver, timeout).until(element_present)
@@ -359,7 +395,7 @@ try:
 				domicilioreceptorcombo = driver.find_element_by_id("domicilioreceptorcombo")
 				select_domicilioreceptorcombo = Select(domicilioreceptorcombo)
 				select_domicilioreceptorcombo.select_by_index(0)
-
+				"""
 				try:
 					element_present = EC.presence_of_element_located((By.ID, "formadepago1"))
 					WebDriverWait(driver, timeout).until(element_present)
@@ -465,6 +501,7 @@ try:
 		##########################################
 
 		elif sele == "2":
+			pdb.set_trace()
 
 			facturado_mes_anterior = input("Ingrese total facturado en el mes anterior: ")
 
@@ -652,8 +689,14 @@ try:
 			
 		elif sele == "6":
 			conn = create_connection(database)
+			mostrar_ingresos_mes(conn)
+			conn.close()
+
+		elif sele == "7":
+			conn = create_connection(database)
 			mostrar_montos_DDJJ(conn)
 			conn.close()
+
 		accion = input("\n ¿Continuar? [S/n]:")
 
 		if accion == 'n':
