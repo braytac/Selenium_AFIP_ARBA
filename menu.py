@@ -153,7 +153,7 @@ try:
 			login_button = driver.find_element_by_id('F1:btnIngresar')
 			login_button.click()
 
-
+			"""
 			try:
 				ir_version_orig = EC.presence_of_element_located((By.XPATH, "//a[contains(., 'Ver versión original')]"))
 				WebDriverWait(driver, timeout).until(ir_version_orig)
@@ -161,12 +161,34 @@ try:
 				driver.get("https://portalcf.cloud.afip.gob.ar/portal/app/")
 			except TimeoutException:
 				pass
-
+			"""
+			"""
+			pdb.set_trace()
+			try:
+				element_present = EC.presence_of_element_located((By.XPATH, "//h3[contains(., 'Monotributo')]"))
+				WebDriverWait(driver, timeout).until(element_present)
+				# Tiene el portal resumido
+				ir_monotributo = driver.find_element(By.XPATH, "//h3[contains(., 'Monotributo')]")
+				ir_monotributo.click()				
+			except TimeoutException:
+				pass			
+			"""
+			"""
 			try:
 				element_present = EC.presence_of_element_located((By.XPATH, "//button[contains(., 'Ir al portal')]"))
 				WebDriverWait(driver, timeout).until(element_present)
 			except TimeoutException:
 				print ("Timed out Ir al Portal")
+			driver.find_element_by_xpath("//button[contains(., 'Ir al portal')]").click()
+			"""
+			try:
+				element_present = EC.presence_of_element_located((By.XPATH, "//h3[contains(., 'Comprobantes en línea')]"))
+				WebDriverWait(driver, timeout).until(element_present)
+			except TimeoutException:
+				print ("Timed out comprobantes en linea")
+
+			comprobantes_linea = driver.find_element(By.XPATH, "//h3[contains(., 'Comprobantes en línea')]")
+			comprobantes_linea.click()
 
 			for handle in driver.window_handles:
 				print(handle)
@@ -174,7 +196,6 @@ try:
 				print("ID win hand: "+str(i))
 
 
-			driver.find_element_by_xpath("//button[contains(., 'Ir al portal')]").click()
 			sleep(2)
 			for handle in driver.window_handles:
 				print(handle)
@@ -207,7 +228,9 @@ try:
 			driver.find_element_by_xpath("//button[contains(.,'Aceptar')]").click()
 			
 			sleep(2)
-			"""
+			
+   
+   			# Ahora no lo estoy usando porque ya se está parando sobre el listado de empresas:
 			try:
 				element_present = EC.presence_of_element_located((By.XPATH, "//button[contains(.,'Emitir Factura')]"))
 				# EC.presence_of_element_located((By.ID, "bBtn1"))
@@ -220,7 +243,7 @@ try:
 			
 			#driver.find_element_by_id('bBtn1').click()
 			driver.find_element_by_xpath("//button[contains(.,'Emitir Factura')]").click()
-			
+			"""
 			
 			"""			  CON LA ACTUALIZACION DEL SITIO YA NO EXISTE ESTO
 			try:
@@ -237,8 +260,11 @@ try:
 			#for handle in driver.window_handles:
 			#	print(handle)
 
-			pyHandle = driver.window_handles[2] # era 2 antes 
-			driver.switch_to.window(pyHandle)
+
+
+			
+			#pyHandle = driver.window_handles[2] # era 2 antes 
+			#driver.switch_to.window(pyHandle)
 			try:
 				element_present = EC.presence_of_element_located((By.XPATH, "//input[@value = 'CABO ENRIQUE ALEJANDRO']"))
 				WebDriverWait(driver, timeout).until(element_present)
