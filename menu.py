@@ -5,21 +5,10 @@ import sys
 import os
 import shutil
 import subprocess as sp
-sys.path.insert(0, 'libs')
-# Migrado de chrome driver a : 
-# https://pypi.org/project/webdriver-manager/
-from webdriver_manager.chrome import ChromeDriverManager
-import selenium
-from selenium import webdriver
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.select import Select
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-
-#import chromedriver_binary
+# selenium 4
+# from selenium import webdriver
+# from selenium.webdriver.chrome.service import Service as ChromeService
+# from webdriver_manager.chrome import ChromeDriverManager
 from getpass import getpass
 
 from time import sleep
@@ -31,9 +20,31 @@ import dateutil.relativedelta
 import lxml.etree
 import lxml.html
 
+sys.path.insert(0, 'libs')
+# Migrado de chrome driver a : 
+# https://pypi.org/project/webdriver-manager/
+# from webdriver_manager.chrome import ChromeDriverManager
+# import selenium
+# from selenium import webdriver
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.select import Select
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+
+
+# import chromedriver_binary  # Adds chromedriver binary to path
 # pip install selenium chromedriver-binary
 # pacman -S python-dateutil python-lxml
-import pdb
+# import pdb
 # import readline
 # import rlcompleter # para autocomp. en modo interact
 
@@ -94,8 +105,8 @@ try:
 			# SI QUIERO TODOS LOS 28
 			#venc  = date(datetime.now().year, datetime.now().month, 28).strftime("%d/%m/%Y")
 
-			# 10 días desde ahora:
-			venc = (datetime.now() + dateutil.relativedelta.relativedelta(days=10)).strftime("%d/%m/%Y")                        
+			# 20 días desde ahora:
+			venc = (datetime.now() + dateutil.relativedelta.relativedelta(days=20)).strftime("%d/%m/%Y")                        
 			#venc = "05/02/2019"
 
 			para = input( selecc + "\n Selección: " )
@@ -114,8 +125,12 @@ try:
 			#cuit_receptor = input("CUIT receptor: ")
 			#monto = input("Precio unitario: ")
 
-			driver = webdriver.Chrome(ChromeDriverManager().install())
-			# driver = webdriver.Chrome()
+			# driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+			# driver = webdriver.Chrome(ChromeDriverManager().install())
+
+			# Con webdriver manager
+			# driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+			driver = webdriver.Chrome()
 			driver.get(pagina_login)
 			# driver.switch_to.window(driver.current_window_handle)
 			pyName = driver.title
@@ -288,12 +303,12 @@ try:
 			for para in destinos_nombres:
 
 				# open new blank tab
-				driver.execute_script("window.open();")
+                #driver.execute_script("window.open();")
 
 				# switch to the new window which is second in window_handles array
 				index_winhand = max(i for i in range(0, len(driver.window_handles)))
-				driver.switch_to.window(driver.window_handles[index_winhand])
-				driver.get(pagina_generar_comprobantes)
+				# driver.switch_to.window(driver.window_handles[index_winhand])
+				# driver.get(pagina_generar_comprobantes)
 
 				monto         = montos.get(para)
 				descripcion   = detalles.get(para)
@@ -752,3 +767,5 @@ except:
 		print("aca1")
 		pass
 
+finally:
+	print("\n Fin try")
