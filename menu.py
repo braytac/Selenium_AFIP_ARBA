@@ -202,6 +202,11 @@ try:
 			except TimeoutException:
 				print ("Timed out comprobantes en linea")
 
+			try:
+				driver.find_element(By.XPATH, "//button[contains(., 'No volver a mostrar')]").click()
+			except:
+				pass
+
 			comprobantes_linea = driver.find_element(By.XPATH, "//h3[contains(., 'Comprobantes en línea')]")
 			comprobantes_linea.click()
 
