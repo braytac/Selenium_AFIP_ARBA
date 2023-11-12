@@ -1,0 +1,5 @@
+# parse_pip_search
+webdriver-manager
+selenium
+lxml
+python-dateutil
