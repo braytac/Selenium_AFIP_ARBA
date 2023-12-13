@@ -127,7 +127,9 @@ try:
 
             # Con webdriver manager
             # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-            driver = webdriver.Chrome()
+            # driver = webdriver.Chrome()
+            service = webdriver.ChromeService(executable_path='/usr/bin/chromedriver')
+            driver = webdriver.Chrome(service=service)
             driver.get(pagina_login)
             # driver.switch_to.window(driver.current_window_handle)
             pyName = driver.title
