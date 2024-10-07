@@ -208,6 +208,12 @@ try:
             except:
                 pass
 
+            try:
+                element_present = EC.presence_of_element_located((By.ID, "novolveramostrar"))
+                WebDriverWait(driver, 3).until(element_present)
+            except TimeoutException:
+                pass
+
             comprobantes_linea = driver.find_element(By.XPATH, "//h3[contains(., 'Comprobantes en línea')]")
             comprobantes_linea.click()
 

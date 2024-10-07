@@ -128,15 +128,35 @@ def guardar_factura(conn, factura_campos):
 def mostrar_facturas(conn):
     sql = """ SELECT nro_comprobante,destinatario,monto,fecha_factura,desde,hasta FROM facturas ORDER BY nro_comprobante ASC """
     facturas = consulta_factura(conn, sql)
-    print("Nº comp.\t  Destinatario\t\t\t monto \t Fecha factura\t Desde\t\tHasta\t \n")    
+    
+    # Imprimir encabezado de las columnas, que son: "Nº comp.", Destinatario, Monto, Fecha, factura,  Desde, Hasta,  teniendo en cuenta la longitud de los datos a mostrar en el for
+    columna1 = "Nº comp.".ljust(10)
+    columna2 = "Destinatario".ljust(45)
+    columna3 = "Monto".ljust(10)
+    columna4 = "Fecha Factura".ljust(15)
+    columna5 = "Desde".ljust(15)
+    columna6 = "Hasta".ljust(15)
+    print(columna1+columna2+"\t"+columna3+"\t"+columna4+"\t"+columna5+"\t"+columna6)
+
+
+
     for factura in facturas:
-        if len(factura[1]) < 25:
-            tab = "\t\t\t";
-        else:
-            tab = ""
-        print(str(factura[0])+"\t"+
-              str(factura[1])+tab+"\t"+
-              str(factura[2])+"\t"+
+        
+        nroFactura = str(factura[0])
+        entidad = str(factura[1])
+        monto = str(factura[2])
+
+        # rellenar nro de factura a 5 caracteres con espacios a la derecha
+        nroFactura = nroFactura.ljust(10)
+        # rellenar entidad a 45 caracteres con espacios a la derecha
+        entidad = entidad.ljust(45)
+        # rellenar monto a 10 caracteres con espacios a la derecha
+        monto = monto.rjust(10)
+
+
+        print(nroFactura+
+              entidad+
+              monto+"\t"+
               str(factura[3])+"\t"+
               str(factura[4])+"\t"+
               str(factura[5]))

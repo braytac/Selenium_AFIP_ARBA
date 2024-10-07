@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+#pip instal selenium lxml chromedriver-binary
+# sudo chmod 755 /usr/lib/python3.7/site-packages/chromedriver_binary/chromedriver
 
 timeout = 20
 GuardarEnDB = True
@@ -7,7 +9,7 @@ pagina_login = 'https://auth.afip.gob.ar/contribuyente_/login.xhtml'
 pagina_generar_comprobantes = 'https://serviciosjava2.afip.gob.ar/rcel/jsp/menu_ppal.jsp'
 pagina_princpal_arba = 'http://www.arba.gov.ar/Gestionar/Gestionar_Default.asp'
 
-unidades_medida = " unidades"
+unidades_medida = "unidades"
 pto_venta = '1'
 #tipo_comprobante = '2'
 tipo_comprobante_txt = 'Factura C'
